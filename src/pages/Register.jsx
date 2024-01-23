@@ -1,65 +1,72 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import KenzieTitle from "../components/KenzieTitle";
+
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import axios from "axios";
+
+const formSchema = z.object({
+  email: z.string().email("Digite um email válido para prosseguir"),
+  password: z.string().min(6, "Digite uma senha com no mínimo 6 caracteres"),
+  confirm_password: z
+    .string()
+    .min(6, "Digite uma senha com no mínimo 6 caracteres"),
+  name: z.string().min(3, "Digite um nome com no mínimo 3 caracteres"),
+  bio: z.string().min(3, "Digite uma bio com no mínimo 3 caracteres"),
+  contact: z.string().min(3, "Digite um contato com no mínimo 3 caracteres"),
+  course_module: z
+    .string()
+    .min(3, "Digite um módulo com no mínimo 3 caracteres"),
+});
 
 export default function Register() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirm_password: "",
-    bio: "",
-    contact: "",
-    course_module: "Primeiro módulo (Introdução ao Frontend)",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      confirm_password: "",
+      name: "",
+      bio: "",
+      contact: "",
+      course_module: "Primeiro módulo (Introdução ao Frontend)",
+    },
   });
 
-  const handleMakeRegister = (event) => {
-    event.preventDefault();
-
-    if (
-      formData.name === "" ||
-      formData.email === "" ||
-      formData.password === "" ||
-      formData.confirm_password === "" ||
-      formData.bio === "" ||
-      formData.contact === "" ||
-      formData.course_module === ""
-    ) {
-      alert("Preencha todos os campos");
+  const makeRegister = (data) => {
+    console.log(data);
+    if (data.password !== data.confirm_password) {
+      alert("As senhas não coincidem");
       return;
     }
 
-    if (formData.password !== formData.confirm_password) {
-      alert("As senhas não coincidem");
-    }
-
-    fetch("https://kenziehub.herokuapp.com/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    }).then((response) => {
-      response.json().then((data) => {
-        if (data.status === "error") {
-          alert(data.message);
-          return;
-        } else if (data.id) {
-          return navigate("/");
-        }
+    axios
+      .post("https://kenziehub.herokuapp.com/users", data)
+      .then((res) => {
+        console.log(res.data);
+        return navigate("/");
+      })
+      .catch((error) => {
+        alert(error.response.data.message);
       });
-    });
   };
 
   return (
     <div className="bg-gray-4 vh flex">
-      <h1 className="login-title">Kenzie Hub</h1>
+      <KenzieTitle />
 
       <div className="card">
         <h3 className="card-title">Crie sua conta</h3>
         <p className="p">Rapido e grátis, vamos nessa</p>
-        <form className="form" onSubmit={handleMakeRegister}>
+        <form className="form" onSubmit={handleSubmit(makeRegister)}>
           <label htmlFor="nome" className="label">
             Nome
           </label>
@@ -67,9 +74,7 @@ export default function Register() {
             type="text"
             placeholder="Digite seu nome"
             className="input"
-            required
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            value={formData.name}
+            {...register("name")}
           />
 
           <label htmlFor="email" className="label">
@@ -79,11 +84,7 @@ export default function Register() {
             type="email"
             placeholder="Digite seu e-mail"
             className="input"
-            required
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
-            value={formData.email}
+            {...register("email")}
           />
 
           <label htmlFor="password" className="label">
@@ -93,11 +94,7 @@ export default function Register() {
             type="password"
             placeholder="Digite sua senha"
             className="input"
-            required
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
-            value={formData.password}
+            {...register("password")}
           />
 
           <label htmlFor="confirm-passowrd" className="label">
@@ -107,11 +104,7 @@ export default function Register() {
             type="password"
             placeholder="Digite novamente sua senha"
             className="input"
-            required
-            onChange={(e) =>
-              setFormData({ ...formData, confirm_password: e.target.value })
-            }
-            value={formData.confirm_password}
+            {...register("confirm_password")}
           />
 
           <label htmlFor="nome" className="label">
@@ -121,9 +114,7 @@ export default function Register() {
             type="text"
             placeholder="Fale sobre você"
             className="input"
-            required
-            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-            value={formData.bio}
+            {...register("bio")}
           />
 
           <label htmlFor="nome" className="label">
@@ -133,11 +124,7 @@ export default function Register() {
             type="text"
             placeholder="Opção de contato"
             className="input"
-            required
-            onChange={(e) =>
-              setFormData({ ...formData, contact: e.target.value })
-            }
-            value={formData.contact}
+            {...register("contact")}
           />
 
           <label htmlFor="">Selecionar módulo</label>
@@ -145,10 +132,7 @@ export default function Register() {
             name=""
             id=""
             className="input"
-            onChange={(e) =>
-              setFormData({ ...formData, course_module: e.target.value })
-            }
-            value={formData.course_module}
+            {...register("course_module")}
           >
             <option value="Primeiro módulo (Introdução ao Frontend)">
               Primeiro módulo (Introdução ao Frontend)
