@@ -6,6 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import axios from "axios";
+import Input from "../components/Input";
 
 const formSchema = z.object({
   email: z.string().email("Digite um email válido para prosseguir"),
@@ -67,65 +68,73 @@ export default function Register() {
         <h3 className="card-title">Crie sua conta</h3>
         <p className="p">Rapido e grátis, vamos nessa</p>
         <form className="form" onSubmit={handleSubmit(makeRegister)}>
-          <label htmlFor="nome" className="label">
-            Nome
-          </label>
-          <input
-            type="text"
+          <Input
+            label="Nome"
             placeholder="Digite seu nome"
-            className="input"
-            {...register("name")}
+            register={register}
+            type={"text"}
+            zodName={"name"}
           />
 
-          <label htmlFor="email" className="label">
-            Email
-          </label>
-          <input
-            type="email"
-            placeholder="Digite seu e-mail"
-            className="input"
-            {...register("email")}
+          {errors.name && <span className="error">{errors.name.message}</span>}
+
+          <Input
+            label="Email"
+            placeholder="Digite seu email"
+            register={register}
+            type={"email"}
+            zodName={"email"}
           />
 
-          <label htmlFor="password" className="label">
-            Senha
-          </label>
-          <input
-            type="password"
+          {errors.email && (
+            <span className="error">{errors.email.message}</span>
+          )}
+
+          <Input
+            label="Senha"
             placeholder="Digite sua senha"
-            className="input"
-            {...register("password")}
+            register={register}
+            type={"password"}
+            zodName={"password"}
           />
 
-          <label htmlFor="confirm-passowrd" className="label">
-            Confirmar senha
-          </label>
-          <input
-            type="password"
+          {errors.password && (
+            <span className="error">{errors.password.message}</span>
+          )}
+
+          <Input
+            label="Confirmar senha"
             placeholder="Digite novamente sua senha"
-            className="input"
-            {...register("confirm_password")}
+            register={register}
+            type={"password"}
+            zodName={"confirm_password"}
           />
 
-          <label htmlFor="nome" className="label">
-            Bio
-          </label>
-          <input
-            type="text"
+          {errors.confirm_password && (
+            <span className="error">{errors.confirm_password.message}</span>
+          )}
+
+          <Input
+            label="Bio"
             placeholder="Fale sobre você"
-            className="input"
-            {...register("bio")}
+            register={register}
+            type={"text"}
+            zodName={"bio"}
           />
 
-          <label htmlFor="nome" className="label">
-            Contato
-          </label>
-          <input
-            type="text"
+          {errors.bio && <span className="error">{errors.bio.message}</span>}
+
+          <Input
+            label="Contato"
             placeholder="Opção de contato"
-            className="input"
-            {...register("contact")}
+            register={register}
+            type={"text"}
+            zodName={"contact"}
           />
+
+          {errors.contact && (
+            <span className="error">{errors.contact.message}</span>
+          )}
 
           <label htmlFor="">Selecionar módulo</label>
           <select
@@ -150,6 +159,9 @@ export default function Register() {
               Sexto Módulo - Frontend avançado
             </option>
           </select>
+          {errors.course_module && (
+            <span className="error">{errors.course_module.message}</span>
+          )}
 
           <button type="submit" className="btn">
             Cadastrar

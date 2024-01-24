@@ -8,6 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import axios from "axios";
+import Input from "../components/Input";
 
 const formSchema = z.object({
   email: z.string().email("Digite um email válido para prosseguir"),
@@ -49,28 +50,26 @@ export default function Login() {
       <div className="card">
         <h3 className="card-title">Login</h3>
         <form className="form" onSubmit={handleSubmit(makeLogin)}>
-          <label htmlFor="email" className="label">
-            Email
-          </label>
-          <input
-            type="email"
-            placeholder="Digite seu Email"
-            className="input"
-            {...register("email")}
+          <Input
+            label="Email"
+            placeholder="Digite seu email"
+            register={register}
+            type={"email"}
+            zodName={"email"}
           />
+
           {errors.email && (
             <span className="error">{errors.email.message}</span>
           )}
 
-          <label htmlFor="password" className="label">
-            Senha
-          </label>
-          <input
-            type="password"
+          <Input
+            label="Senha"
             placeholder="Digite sua senha"
-            className="input"
-            {...register("password")}
+            register={register}
+            type={"password"}
+            zodName={"password"}
           />
+
           {errors.password && (
             <span className="error">{errors.password.message}</span>
           )}
