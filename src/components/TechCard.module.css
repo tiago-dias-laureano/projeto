@@ -1,0 +1,25 @@
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #121214;
+
+  height: 50px;
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+}
+
+.status {
+  color: #868e96;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}

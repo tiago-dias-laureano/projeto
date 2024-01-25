@@ -1,10 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 
 import { useNavigate } from "react-router-dom";
+
+import styles from "./Dashboard.module.css";
+
+import TechContext from "../context/TechContext";
+
+import TechList from "../components/TechList";
+import CreateTechModal from "../components/CreateTechModal";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState({});
+  const [isOpenModal, setIsOpenModal] = useState(false);
+
+  const { setTechs } = useContext(TechContext);
 
   useEffect(() => {
     const token = localStorage.getItem("kenzietoken");
@@ -21,6 +31,7 @@ export default function Dashboard() {
         console.log(data);
         if (data) {
           setProfile(data);
+          setTechs(data.techs);
         }
       });
     });
@@ -30,8 +41,11 @@ export default function Dashboard() {
     localStorage.removeItem("kenzietoken");
     navigate("/");
   }
+
   return (
-    <div className="bg-gray-4 vh ">
+    <div className="bg-gray-4 vh">
+      {isOpenModal && <CreateTechModal setIsOpenModal={setIsOpenModal} />}
+
       <div className="border-b">
         <div className="container flex-row">
           <h2 className="logo">Kenzie Hub</h2>
@@ -51,10 +65,16 @@ export default function Dashboard() {
 
       <div className="border-b">
         <div className="container">
-          <h2 className="h2-white">Que pena! Estamos em desenvolvimento :(</h2>
-          <p className="p-white">
-            Nossa aplicação está em desenvolvimento, em breve teremos novidades
-          </p>
+          <div className="flex-row">
+            <h3 className="h2-white">Tecnologias</h3>
+            <button
+              className={styles.buttonMore}
+              onClick={() => setIsOpenModal(!isOpenModal)}
+            >
+              +
+            </button>
+          </div>
+          <TechList />
         </div>
       </div>
     </div>
